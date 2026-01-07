@@ -1034,3 +1034,32 @@ body.light-theme .header-contacts:hover .contact-text {
 .cards-counter {
     display: none !important;
 }
+
+/* Быстрый фикс для мобильных кликов */
+@media (max-width: 768px) {
+    .card {
+        /* Увеличиваем область клика */
+        position: relative;
+        overflow: visible;
+    }
+    
+    .card::before {
+        /* Создаем невидимую область для кликов */
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        z-index: 5;
+    }
+    
+    /* Делаем модальное окно проще для закрытия */
+    .modal {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .modal-content {
+        touch-action: manipulation;
+    }
+}
