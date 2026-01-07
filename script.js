@@ -270,9 +270,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     video.currentTime = 0;
                 });
                 
-                cardElement.addEventListener('click', function() {
-                    openVideoModal(card.path);
-                });
+                // Функция для открытия изображения
+                function openImageHandler(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openImageModal(card.path);
+                    return false;
+                }
+
+                // Добавляем оба типа событий
+                cardElement.addEventListener('click', openImageHandler);
+                cardElement.addEventListener('touchend', openImageHandler);
                 
                 cardElement.appendChild(video);
             } else {
@@ -296,9 +304,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     cardElement.appendChild(errorDiv);
                 };
                 
-                cardElement.addEventListener('click', function() {
-                    openImageModal(card.path);
-                });
+                // Функция для открытия видео
+                function openVideoHandler(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openVideoModal(card.path);
+                    return false;
+                }
+
+                // Добавляем оба типа событий
+                cardElement.addEventListener('click', openVideoHandler);
+                cardElement.addEventListener('touchend', openVideoHandler);
                 
                 cardElement.appendChild(img);
             }
@@ -321,6 +337,23 @@ document.addEventListener('DOMContentLoaded', function() {
             closeImageModal();
         }
     });
+
+    // Закрытие по touch на затемненную область (для мобильных)
+    imageModal.addEventListener('touchend', function(e) {
+        if (e.target === imageModal) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeImageModal();
+            return false;
+        }
+    });
+
+    // Предотвращаем скроллинг при открытом модальном окне на мобильных
+    document.addEventListener('touchmove', function(e) {
+        if (imageModal.classList.contains('show')) {
+            e.preventDefault();
+        }
+    }, { passive: false });
 
     // Закрытие по нажатию Escape
     document.addEventListener('keydown', function(e) {
