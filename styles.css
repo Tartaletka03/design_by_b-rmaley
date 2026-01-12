@@ -9,11 +9,13 @@
     --darker-bg: #050508;
     --accent: #8a2be2;
     --accent-hover: #9d3ef5;
+    --accent-light: #9d4edd;
     --text: #e0e0e0;
     --text-secondary: #a0a0a0;
     --card-bg: rgba(26, 26, 36, 0.5);
     --glow: rgba(138, 43, 226, 0.3);
     --transition-speed: 0.4s;
+    --border-radius: 16px;
 }
 
 body {
@@ -24,6 +26,7 @@ body {
     padding: 20px;
     line-height: 1.6;
     transition: all var(--transition-speed) ease;
+    overflow-x: hidden;
 }
 
 body * {
@@ -31,7 +34,9 @@ body * {
                 color var(--transition-speed) ease, 
                 border-color var(--transition-speed) ease,
                 transform var(--transition-speed) ease,
-                opacity var(--transition-speed) ease;
+                opacity var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease,
+                filter var(--transition-speed) ease;
 }
 
 .container {
@@ -50,10 +55,11 @@ body * {
     padding: 30px 20px;
     position: relative;
     overflow: hidden;
-    border-radius: 16px;
+    border-radius: var(--border-radius);
     background: linear-gradient(145deg, rgba(26, 26, 36, 0.8) 0%, rgba(10, 10, 15, 0.9) 100%);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(138, 43, 226, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .header::before {
@@ -64,10 +70,11 @@ body * {
     right: 0;
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.8;
 }
 
 .header h1 {
-    font-size: 2.8rem;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
     font-weight: 700;
     background: linear-gradient(90deg, #fff, var(--accent));
     -webkit-background-clip: text;
@@ -80,11 +87,13 @@ body * {
 
 .header p {
     color: var(--text-secondary);
-    font-size: 1.1rem;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
     max-width: 600px;
     margin: 0 auto;
+    line-height: 1.5;
 }
 
+/* Переключатель темы */
 .theme-switcher {
     position: absolute;
     top: 20px;
@@ -112,7 +121,7 @@ body * {
     right: 0;
     bottom: 0;
     background: linear-gradient(145deg, #2d2d42, #1a1a2e);
-    transition: .4s;
+    transition: .4s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 34px;
     border: 1px solid rgba(138, 43, 226, 0.3);
 }
@@ -124,8 +133,8 @@ body * {
     width: 22px;
     left: 4px;
     bottom: 3px;
-    background: linear-gradient(145deg, #8a2be2, #6a1bb8);
-    transition: .4s;
+    background: linear-gradient(145deg, var(--accent), var(--accent-light));
+    transition: .4s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 50%;
     z-index: 2;
 }
@@ -178,14 +187,136 @@ input:checked + .slider + .theme-icons .sun {
     opacity: 1;
 }
 
+/* Мобильное боковое меню */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    width: 44px;
+    height: 44px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-menu-toggle:hover {
+    background: var(--accent-hover);
+    transform: scale(1.1);
+}
+
+.mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100vh;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(138, 43, 226, 0.2);
+    z-index: 1002;
+    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.mobile-sidebar.active {
+    left: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+.sidebar-header h3 {
+    color: var(--text);
+    font-size: 1.3rem;
+}
+
+.sidebar-close {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-close:hover {
+    background: rgba(138, 43, 226, 0.1);
+}
+
+.mobile-theme-switcher,
+.mobile-contacts {
+    margin-bottom: 30px;
+}
+
+.mobile-theme-switcher p,
+.mobile-contacts p {
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.mobile-contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mobile-contact-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(138, 43, 226, 0.1);
+    border-radius: 12px;
+    color: var(--text);
+    text-decoration: none;
+    border: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+.mobile-contact-link:hover {
+    background: rgba(138, 43, 226, 0.2);
+    transform: translateX(5px);
+}
+
+.mobile-contact-link i {
+    font-size: 1.2rem;
+    width: 24px;
+}
+
+.mobile-contact-link span {
+    font-size: 0.95rem;
+}
+
+/* Управление */
 .controls-container {
     background: rgba(26, 26, 36, 0.3);
-    border-radius: 16px;
+    border-radius: var(--border-radius);
     padding: 25px;
     margin-bottom: 30px;
     border: 1px solid rgba(138, 43, 226, 0.1);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
 .controls-container::before {
@@ -196,6 +327,7 @@ input:checked + .slider + .theme-icons .sun {
     right: 0;
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.8;
 }
 
 .sort-controls {
@@ -203,70 +335,73 @@ input:checked + .slider + .theme-icons .sun {
     justify-content: center;
     gap: 15px;
     margin-bottom: 25px;
+    flex-wrap: wrap;
 }
 
 .sort-btn {
-    padding: 10px 20px;
+    padding: 12px 24px;
     background: rgba(26, 26, 36, 0.7);
     border: 1px solid rgba(138, 43, 226, 0.3);
     color: var(--text);
     border-radius: 25px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 500;
+    min-width: 150px;
 }
 
 .sort-btn:hover {
     background: var(--accent);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px var(--glow);
+    box-shadow: 0 8px 20px var(--glow);
 }
 
 .sort-btn.active {
     background: var(--accent);
-    box-shadow: 0 0 15px var(--glow);
+    box-shadow: 0 0 20px var(--glow);
 }
 
 .filter-mode {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
 }
 
 .mode-btn {
-    padding: 8px 16px;
+    padding: 10px 20px;
     background: rgba(26, 26, 36, 0.7);
     border: 1px solid rgba(138, 43, 226, 0.3);
     color: var(--text);
     border-radius: 20px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    min-width: 120px;
 }
 
 .mode-btn:hover {
     background: var(--accent);
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--glow);
 }
 
 .mode-btn.active {
     background: var(--accent);
-    box-shadow: 0 0 10px var(--glow);
+    box-shadow: 0 0 15px var(--glow);
 }
 
 .filters-section {
     opacity: 0;
     max-height: 0;
     overflow: hidden;
-    transition: all 0.5s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .filters-section.show {
     opacity: 1;
     max-height: 200px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .controls {
@@ -278,77 +413,83 @@ input:checked + .slider + .theme-icons .sun {
 }
 
 .filter-btn {
-    padding: 10px 20px;
+    padding: 12px 24px;
     background: rgba(26, 26, 36, 0.7);
     border: 1px solid rgba(138, 43, 226, 0.3);
     color: var(--text);
     border-radius: 25px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 500;
+    min-width: 100px;
 }
 
 .filter-btn:hover {
     background: var(--accent);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px var(--glow);
+    box-shadow: 0 8px 20px var(--glow);
 }
 
 .filter-btn.active {
     background: var(--accent);
-    box-shadow: 0 0 15px var(--glow);
+    box-shadow: 0 0 20px var(--glow);
 }
 
+/* Счетчик найденных карт */
+.found-cards-counter {
+    text-align: center;
+    font-size: 1.1rem;
+    margin: 25px 0;
+    padding: 15px;
+    background: rgba(138, 43, 226, 0.1);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.counter-number {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px var(--glow);
+}
+
+/* Переключение вида */
 .view-toggle-section {
     text-align: center;
     margin: 30px 0;
 }
 
 .view-toggle-btn {
-    padding: 12px 30px;
-    background: linear-gradient(135deg, var(--accent), #6a1bb8);
+    padding: 15px 35px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
     border: none;
     color: white;
     border-radius: 30px;
     cursor: pointer;
-    transition: all 0.3s ease;
     font-size: 1rem;
     font-weight: 600;
-    box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
+    letter-spacing: 0.5px;
 }
 
 .view-toggle-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6);
-    background: linear-gradient(135deg, #9d3ef5, #7a2cc9);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 35px rgba(138, 43, 226, 0.6);
+    background: linear-gradient(135deg, var(--accent-hover), var(--accent));
 }
 
 .view-toggle-btn.secondary {
     background: linear-gradient(135deg, #475569, #334155);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .view-toggle-btn.secondary:hover {
     background: linear-gradient(135deg, #64748b, #475569);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
 }
 
-.cards-counter {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: rgba(138, 43, 226, 0.9);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 25px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    z-index: 1000;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
+/* Контейнер карточек */
 .cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -363,7 +504,6 @@ input:checked + .slider + .theme-icons .sun {
     overflow: hidden;
     position: relative;
     background: transparent;
-    transition: all 0.4s ease;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -381,7 +521,6 @@ input:checked + .slider + .theme-icons .sun {
     background: var(--card-bg);
     border-radius: 12px;
     opacity: 0;
-    transition: opacity 0.3s ease;
     z-index: -1;
 }
 
@@ -393,21 +532,23 @@ input:checked + .slider + .theme-icons .sun {
     transform: translateY(-10px) scale(1.03);
 }
 
-.card img {
+.card img,
+.card video {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
     display: block;
-    transition: transform 0.5s ease;
     filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
 }
 
-.card:hover img {
+.card:hover img,
+.card:hover video {
     transform: scale(1.05);
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.7)) 
             drop-shadow(0 0 15px var(--glow));
 }
 
+/* Модальное окно */
 .modal {
     display: none;
     position: fixed;
@@ -420,7 +561,6 @@ input:checked + .slider + .theme-icons .sun {
     justify-content: center;
     align-items: center;
     opacity: 0;
-    transition: opacity 0.3s ease;
 }
 
 .modal.show {
@@ -437,24 +577,15 @@ input:checked + .slider + .theme-icons .sun {
     align-items: center;
 }
 
+.modal-content img,
 .modal-content video {
-    width: 100vw;
-    height: 100vh;
-    max-width: 100vw;
-    max-height: 100vh;
-    object-fit: contain;
-    border-radius: 0;
-}
-
-.modal-content img {
     max-width: 90vw;
     max-height: 90vh;
-    width: auto;
-    height: auto;
     object-fit: contain;
     border-radius: 8px;
 }
 
+/* Анимации */
 @keyframes zoomIn {
     from {
         transform: scale(0.8);
@@ -505,289 +636,7 @@ input:checked + .slider + .theme-icons .sun {
     margin: 0 auto;
 }
 
-.contact-section {
-    background: rgba(26, 26, 36, 0.3);
-    border-radius: 16px;
-    padding: 40px;
-    margin: 50px 0;
-    border: 1px solid rgba(138, 43, 226, 0.1);
-    position: relative;
-    overflow: hidden;
-    text-align: center;
-}
-
-.contact-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-}
-
-.contact-section h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    background: linear-gradient(90deg, #fff, var(--accent));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-.contact-section p {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin: 0 auto 30px;
-}
-
-.contact-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.contact-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 15px 30px;
-    background: rgba(138, 43, 226, 0.2);
-    border: 1px solid var(--accent);
-    color: var(--text);
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1rem;
-    font-weight: 500;
-    text-decoration: none;
-}
-
-.contact-btn:hover {
-    background: var(--accent);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px var(--glow);
-    color: white;
-}
-
-.contact-btn.telegram {
-    background: rgba(0, 136, 204, 0.2);
-    border-color: #0088cc;
-}
-
-.contact-btn.telegram:hover {
-    background: #0088cc;
-}
-
-.contact-btn.discord {
-    background: rgba(88, 101, 242, 0.2);
-    border-color: #5865F2;
-}
-
-.contact-btn.discord:hover {
-    background: #5865F2;
-}
-
-.contact-icon {
-    font-size: 1.2rem;
-}
-
-.footer {
-    text-align: center;
-    margin-top: 60px;
-    padding: 30px 0;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Светлая тема */
-body.light-theme {
-    --dark-bg: #f8fafc;
-    --darker-bg: #e2e8f0;
-    --accent: #2563eb;
-    --accent-hover: #1d4ed8;
-    --text: #1e293b;
-    --text-secondary: #475569;
-    --card-bg: transparent;
-    --glow: rgba(37, 99, 235, 0.2);
-    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
-}
-
-body.light-theme .header {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%);
-    border: 1px solid rgba(37, 99, 235, 0.2);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-}
-
-body.light-theme .header h1 {
-    background: linear-gradient(90deg, #1e293b, var(--accent));
-    -webkit-background-clip: text;
-    background-clip: text;
-}
-
-body.light-theme .controls-container,
-body.light-theme .contact-section {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(37, 99, 235, 0.1);
-}
-
-body.light-theme .card::before {
-    display: none;
-}
-
-body.light-theme .card {
-    background: transparent;
-    border: 1px solid rgba(37, 99, 235, 0.1);
-}
-
-body.light-theme .card:hover {
-    border-color: rgba(37, 99, 235, 0.3);
-    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
-}
-
-body.light-theme .card img {
-    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.1));
-}
-
-body.light-theme .card:hover img {
-    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2)) 
-            drop-shadow(0 0 10px rgba(37, 99, 235, 0.3));
-}
-
-body.light-theme .filter-btn,
-body.light-theme .sort-btn,
-body.light-theme .mode-btn {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(37, 99, 235, 0.3);
-    color: var(--text);
-}
-
-body.light-theme .filter-btn:hover,
-body.light-theme .sort-btn:hover,
-body.light-theme .mode-btn:hover {
-    background: var(--accent);
-    color: white;
-}
-
-body.light-theme .filter-btn.active,
-body.light-theme .sort-btn.active,
-body.light-theme .mode-btn.active {
-    background: var(--accent);
-    color: white;
-}
-
-body.light-theme .view-toggle-btn {
-    background: linear-gradient(135deg, var(--accent), #1d4ed8);
-}
-
-body.light-theme .view-toggle-btn.secondary {
-    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
-}
-
-body.light-theme .cards-counter {
-    background: rgba(37, 99, 235, 0.9);
-    color: white;
-}
-
-body.light-theme .footer {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    color: var(--text-secondary);
-}
-
-body.light-theme .modal {
-    background-color: rgba(0, 0, 0, 0.85);
-}
-
-body.light-theme .empty-state h3,
-body.light-theme .empty-state p {
-    color: var(--text-secondary);
-}
-
-body.light-theme .slider {
-    background: linear-gradient(145deg, #e2e8f0, #cbd5e0);
-    border: 1px solid rgba(37, 99, 235, 0.3);
-}
-
-body.light-theme input:checked + .slider {
-    background: linear-gradient(145deg, #2563eb, #1d4ed8);
-}
-
-body.light-theme .slider:before {
-    background: linear-gradient(145deg, #3b82f6, #2563eb);
-}
-
-body.light-theme input:checked + .slider:before {
-    background: linear-gradient(145deg, #fbbf24, #f59e0b);
-}
-
-body.light-theme .contact-btn {
-    background: rgba(37, 99, 235, 0.1);
-    border-color: var(--accent);
-    color: var(--text);
-}
-
-body.light-theme .contact-btn:hover {
-    background: var(--accent);
-    color: white;
-}
-
-@media (max-width: 768px) {
-    .cards-container {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 20px;
-    }
-    
-    .card {
-        height: 320px;
-    }
-    
-    .header h1 {
-        font-size: 2.2rem;
-    }
-    
-    .contact-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .contact-btn {
-        width: 100%;
-        max-width: 300px;
-        justify-content: center;
-    }
-    
-    .controls, .sort-controls, .filter-mode {
-        gap: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .cards-container {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 15px;
-    }
-    
-    .card {
-        height: 240px;
-    }
-    
-    .header h1 {
-        font-size: 1.8rem;
-    }
-    
-    .contact-section {
-        padding: 30px 20px;
-    }
-    
-    .filter-btn, .sort-btn, .mode-btn {
-        padding: 8px 16px;
-        font-size: 0.8rem;
-    }
-}
-
+/* Подсказка фильтра */
 .filter-hint {
     text-align: center;
     color: var(--text-secondary);
@@ -797,54 +646,27 @@ body.light-theme .contact-btn:hover {
     font-style: italic;
 }
 
-.card video {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    display: block;
-    transition: transform 0.5s ease;
-    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
-    border-radius: 8px;
-}
-
-.card:hover video {
-    transform: scale(1.05);
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.7)) 
-            drop-shadow(0 0 15px var(--glow));
-}
-
-.modal-content video {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    border-radius: 8px;
-    animation: zoomIn 0.3s ease;
-}
-
 /* Контакты в хедере */
 .header-contacts {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-    padding: 12px 25px;
+    gap: 20px;
+    margin-top: 25px;
+    padding: 15px 30px;
     background: rgba(138, 43, 226, 0.1);
     border-radius: 25px;
     border: 1px solid rgba(138, 43, 226, 0.2);
     backdrop-filter: blur(10px);
-    max-width: 320px;
-    margin: 20px auto 0;
-    transition: all 0.3s ease;
+    max-width: 200px;
+    margin: 25px auto 0;
 }
 
 .header-contacts:hover {
     background: rgba(138, 43, 226, 0.15);
     border-color: rgba(138, 43, 226, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(138, 43, 226, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.2);
 }
 
 .contact-link {
@@ -857,7 +679,6 @@ body.light-theme .contact-btn:hover {
     border-radius: 50%;
     color: var(--text);
     text-decoration: none;
-    transition: all 0.3s ease;
     border: 1px solid rgba(138, 43, 226, 0.3);
     position: relative;
     overflow: hidden;
@@ -872,7 +693,6 @@ body.light-theme .contact-btn:hover {
     bottom: 0;
     background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(106, 27, 184, 0.3));
     opacity: 0;
-    transition: opacity 0.3s ease;
 }
 
 .contact-link:hover {
@@ -884,13 +704,10 @@ body.light-theme .contact-btn:hover {
     opacity: 1;
 }
 
-/* Специфичные стили для иконок мессенджеров */
-.contact-link.fab,
 .contact-link i {
     position: relative;
     z-index: 2;
     font-size: 1.4rem;
-    transition: all 0.3s ease;
 }
 
 .contact-link:hover i {
@@ -936,21 +753,159 @@ body.light-theme .contact-btn:hover {
     color: #5865F2;
 }
 
-.contact-text {
+/* Футер */
+.footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 30px 0;
     color: var(--text-secondary);
-    font-size: 0.95rem;
-    font-weight: 500;
-    margin-left: 5px;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.header-contacts:hover .contact-text {
+/* СВЕТЛАЯ ТЕМА */
+body.light-theme {
+    --dark-bg: #f8fafc;
+    --darker-bg: #e2e8f0;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-light: #3b82f6;
+    --text: #1e293b;
+    --text-secondary: #475569;
+    --card-bg: transparent;
+    --glow: rgba(37, 99, 235, 0.15);
+    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+}
+
+body.light-theme .header {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .header h1 {
+    background: linear-gradient(90deg, #1e293b, var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+body.light-theme .mobile-sidebar {
+    background: rgba(255, 255, 255, 0.95);
+    border-right: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+body.light-theme .controls-container,
+body.light-theme .found-cards-counter {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(37, 99, 235, 0.15);
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.1);
+}
+
+body.light-theme .card::before {
+    display: none;
+}
+
+body.light-theme .card {
+    background: transparent;
+    border: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+body.light-theme .card:hover {
+    border-color: rgba(37, 99, 235, 0.3);
+    box-shadow: 0 12px 35px rgba(37, 99, 235, 0.15);
+}
+
+body.light-theme .card img,
+body.light-theme .card video {
+    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.1));
+}
+
+body.light-theme .card:hover img,
+body.light-theme .card:hover video {
+    filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.2)) 
+            drop-shadow(0 0 15px rgba(37, 99, 235, 0.3));
+}
+
+body.light-theme .filter-btn,
+body.light-theme .sort-btn,
+body.light-theme .mode-btn {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(37, 99, 235, 0.25);
     color: var(--text);
-    text-shadow: 0 0 10px var(--glow);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
 }
 
-/* Светлая тема */
+body.light-theme .filter-btn:hover,
+body.light-theme .sort-btn:hover,
+body.light-theme .mode-btn:hover {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+}
+
+body.light-theme .filter-btn.active,
+body.light-theme .sort-btn.active,
+body.light-theme .mode-btn.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+}
+
+body.light-theme .view-toggle-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+}
+
+body.light-theme .view-toggle-btn:hover {
+    background: linear-gradient(135deg, var(--accent-hover), var(--accent));
+    box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+}
+
+body.light-theme .view-toggle-btn.secondary {
+    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .view-toggle-btn.secondary:hover {
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+body.light-theme .counter-number {
+    color: var(--accent);
+}
+
+body.light-theme .found-cards-counter {
+    background: rgba(37, 99, 235, 0.05);
+    border: 1px solid rgba(37, 99, 235, 0.15);
+}
+
+body.light-theme .footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--text-secondary);
+}
+
+body.light-theme .modal {
+    background-color: rgba(0, 0, 0, 0.95);
+}
+
+body.light-theme .slider {
+    background: linear-gradient(145deg, #e2e8f0, #cbd5e0);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+}
+
+body.light-theme input:checked + .slider {
+    background: linear-gradient(145deg, #2563eb, #1d4ed8);
+}
+
+body.light-theme .slider:before {
+    background: linear-gradient(145deg, #3b82f6, #2563eb);
+}
+
+body.light-theme input:checked + .slider:before {
+    background: linear-gradient(145deg, #fbbf24, #f59e0b);
+}
+
 body.light-theme .header-contacts {
     background: rgba(37, 99, 235, 0.08);
     border: 1px solid rgba(37, 99, 235, 0.15);
@@ -959,7 +914,7 @@ body.light-theme .header-contacts {
 body.light-theme .header-contacts:hover {
     background: rgba(37, 99, 235, 0.12);
     border-color: rgba(37, 99, 235, 0.25);
-    box-shadow: 0 5px 20px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
 }
 
 body.light-theme .contact-link:nth-child(1) {
@@ -980,163 +935,475 @@ body.light-theme .contact-link:nth-child(2) i {
     color: #5865F2;
 }
 
-body.light-theme .contact-text {
-    color: var(--text-secondary);
+body.light-theme .mobile-contact-link {
+    background: rgba(37, 99, 235, 0.08);
+    border: 1px solid rgba(37, 99, 235, 0.15);
 }
 
-body.light-theme .header-contacts:hover .contact-text {
-    color: var(--text);
+body.light-theme .mobile-contact-link:hover {
+    background: rgba(37, 99, 235, 0.15);
 }
 
+/* АДАПТИВНОСТЬ */
 @media (max-width: 768px) {
-    .header-contacts {
-        gap: 12px;
-        padding: 10px 20px;
-        max-width: 280px;
+    .mobile-menu-toggle {
+        display: flex;
     }
     
-    .contact-link {
-        width: 40px;
-        height: 40px;
+    .theme-switcher.desktop-theme,
+    .header-contacts.desktop-contacts {
+        display: none;
     }
     
-    .contact-link i {
-        font-size: 1.2rem;
+    .cards-container {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 20px;
     }
     
-    .contact-text {
+    .card {
+        height: 240px;
+    }
+    
+    .header h1 {
+        font-size: 1.8rem;
+        margin-top: 20px;
+    }
+    
+    .header p {
+        font-size: 0.95rem;
+        padding: 0 10px;
+    }
+    
+    .controls-container {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    
+    .sort-controls,
+    .filter-mode,
+    .controls {
+        gap: 8px;
+    }
+    
+    .sort-btn,
+    .filter-btn,
+    .mode-btn {
+        padding: 10px 16px;
         font-size: 0.85rem;
+        min-width: auto;
+        flex: 1;
+    }
+    
+    .view-toggle-btn {
+        padding: 12px 25px;
+        font-size: 0.95rem;
+    }
+    
+    .found-cards-counter {
+        font-size: 1rem;
+        padding: 12px;
+        margin: 20px 0;
+    }
+    
+    .counter-number {
+        font-size: 1.1rem;
     }
 }
 
 @media (max-width: 480px) {
-    .header-contacts {
-        gap: 10px;
-        padding: 8px 16px;
-        max-width: 260px;
+    body {
+        padding: 10px;
     }
     
-    .contact-link {
-        width: 36px;
-        height: 36px;
+    .cards-container {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 15px;
     }
     
-    .contact-link i {
-        font-size: 1.1rem;
+    .card {
+        height: 200px;
     }
     
-    .contact-text {
+    .header {
+        padding: 20px 15px;
+        margin-bottom: 25px;
+    }
+    
+    .header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .header p {
+        font-size: 0.9rem;
+    }
+    
+    .sort-btn,
+    .filter-btn,
+    .mode-btn {
+        padding: 8px 12px;
         font-size: 0.8rem;
     }
+    
+    .mobile-sidebar {
+        width: 260px;
+    }
+    
+    .footer {
+        font-size: 0.8rem;
+        padding: 20px 0;
+        margin-top: 40px;
+    }
 }
 
-/* Добавь в конец CSS */
-.cards-counter {
-    display: none !important;
+/* Фикс для тени кнопки в светлой теме */
+body.light-theme .view-toggle-btn {
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.2);
 }
 
+body.light-theme .view-toggle-btn:hover {
+    box-shadow: 0 12px 35px rgba(37, 99, 235, 0.3);
+}
 
-/* Исправление для мобильных устройств */
+/* Контакты в хедере - ОБЩИЙ СТИЛЬ ДЛЯ ПК И МОБИЛЬНЫХ */
+.header-contacts.desktop-contacts {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 25px;
+    padding: 20px 40px;
+    background: rgba(138, 43, 226, 0.1);
+    border-radius: 25px;
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    backdrop-filter: blur(10px);
+    max-width: 320px;
+    margin: 25px auto 0;
+}
+
+.header-contacts.desktop-contacts:hover {
+    background: rgba(138, 43, 226, 0.15);
+    border-color: rgba(138, 43, 226, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.2);
+}
+
+/* Стиль для десктопных контактов с текстом */
+.contact-link-with-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: rgba(138, 43, 226, 0.2);
+    border-radius: 20px;
+    color: var(--text);
+    text-decoration: none;
+    border: 1px solid rgba(138, 43, 226, 0.3);
+    position: relative;
+    overflow: hidden;
+    min-width: 150px;
+}
+
+.contact-link-with-text:hover {
+    background: rgba(138, 43, 226, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px var(--glow);
+}
+
+.contact-link-with-text i {
+    font-size: 1.3rem;
+}
+
+.contact-link-with-text span {
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* Telegram стиль */
+.contact-link-with-text.telegram {
+    background: rgba(0, 136, 204, 0.15);
+    border-color: rgba(0, 136, 204, 0.3);
+}
+
+.contact-link-with-text.telegram:hover {
+    background: rgba(0, 136, 204, 0.25);
+    box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+}
+
+.contact-link-with-text.telegram i {
+    color: #0088cc;
+}
+
+/* Discord стиль */
+.contact-link-with-text.discord {
+    background: rgba(88, 101, 242, 0.15);
+    border-color: rgba(88, 101, 242, 0.3);
+}
+
+.contact-link-with-text.discord:hover {
+    background: rgba(88, 101, 242, 0.25);
+    box-shadow: 0 8px 25px rgba(88, 101, 242, 0.4);
+}
+
+.contact-link-with-text.discord i {
+    color: #5865F2;
+}
+
+/* Счетчик найденных карт - УПРОЩЕННЫЙ ВАРИАНТ */
+.found-cards-counter {
+    text-align: center;
+    font-size: 1rem;
+    margin: 15px 0 0 0;
+    padding: 5px;
+    background: transparent;
+    border-radius: 0;
+    border: none;
+    backdrop-filter: none;
+    color: var(--text);
+}
+
+.found-cards-counter .counter-number {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1.1rem;
+    text-shadow: 0 0 10px var(--glow);
+}
+
+/* Светлая тема для счетчика */
+body.light-theme .found-cards-counter {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+body.light-theme .found-cards-counter .counter-number {
+    color: var(--accent);
+}
+
+/* Стиль для десктопа */
+@media (min-width: 769px) {
+    .mobile-menu-toggle {
+        display: none;
+    }
+    
+    /* Контакты в хедере на ПК */
+    .header-contacts.desktop-contacts {
+        flex-direction: row;
+        gap: 20px;
+        max-width: 400px;
+        padding: 20px 30px;
+    }
+    
+    .contact-link-with-text {
+        min-width: 140px;
+        padding: 12px 18px;
+    }
+    
+    /* Счетчик на ПК */
+    .found-cards-counter {
+        font-size: 1rem;
+        margin-top: 10px;
+    }
+}
+
+/* Мобильная версия */
 @media (max-width: 768px) {
-    .card {
-        /* Увеличиваем область клика */
-        position: relative;
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-        touch-action: manipulation;
+    /* Скрываем десктопные контакты на мобильных */
+    .header-contacts.desktop-contacts {
+        display: none;
     }
     
-    /* Делаем всю карточку кликабельной */
-    .card::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 5;
+    /* Счетчик на мобильных */
+    .found-cards-counter {
+        font-size: 0.95rem;
+        margin-top: 10px;
     }
     
-    /* Улучшаем модальное окно для мобильных */
-    .modal {
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-    }
-    
-    .modal-content {
-        position: relative;
-        width: 100vw;
-        height: 100vh;
-        max-width: 100vw;
-        max-height: 100vh;
-    }
-    
-    .modal-content img,
-    .modal-content video {
-        max-width: 100vw;
-        max-height: 100vh;
-        width: auto;
-        height: auto;
-    }
-/*     
-    .modal::before {
-        content: 'Нажмите на темную область для закрытия';
-        position: absolute;
-        top: 20px;
-        left: 0;
-        right: 0;
-        text-align: center;
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 14px;
-        z-index: 2001;
-        pointer-events: none;
-        padding: 10px;
-    } */
-}
-
-/* Стили для крестика закрытия на мобильных */
-@media (max-width: 768px) {
-    .modal-content div[style*="position: fixed"] {
-        top: 10px !important;
-        right: 10px !important;
-        width: 30px !important;
-        height: 30px !important;
-        font-size: 18px !important;
-        opacity: 0.6 !important;
-    }
-    
-    .modal-content div[style*="position: fixed"]:active {
-        opacity: 1 !important;
-        background: rgba(0,0,0,0.8) !important;
+    .found-cards-counter .counter-number {
+        font-size: 1rem;
     }
 }
 
-/* Улучшения для мобильных устройств */
+/* Переключение вида */
+.view-toggle-section {
+    text-align: center;
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.view-toggle-btn {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    border: none;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(138, 43, 226, 0.3);
+    letter-spacing: 0.3px;
+    min-width: 220px;
+    max-width: 280px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.view-toggle-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 30px rgba(138, 43, 226, 0.5);
+    background: linear-gradient(135deg, var(--accent-hover), var(--accent));
+}
+
+.view-toggle-btn.secondary {
+    background: linear-gradient(135deg, #4a5568, #2d3748);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.view-toggle-btn.secondary:hover {
+    background: linear-gradient(135deg, #5a6578, #3d4859);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Иконки в кнопках */
+.view-toggle-btn::before {
+    font-size: 1.1rem;
+    font-weight: normal;
+}
+
+/* Адаптивность для кнопок */
 @media (max-width: 768px) {
-    /* Крестик закрытия на мобильных */
-    .modal-content div[style*="position: fixed"] {
-        top: 10px !important;
-        right: 10px !important;
-        width: 32px !important;
-        height: 32px !important;
-        font-size: 18px !important;
-        opacity: 0.6 !important;
-        background: rgba(0,0,0,0.6) !important;
+    .view-toggle-section {
+        margin: 20px 0;
     }
     
-    .modal-content div[style*="position: fixed"]:active {
-        opacity: 1 !important;
-        background: rgba(0,0,0,0.9) !important;
+    .view-toggle-btn {
+        padding: 10px 22px;
+        font-size: 0.9rem;
+        min-width: 200px;
+        max-width: 250px;
+        height: 44px;
     }
-    
-    /* Убираем hover эффекты на мобильных */
-    .card:hover {
-        transform: none !important;
+}
+
+@media (max-width: 480px) {
+    .view-toggle-btn {
+        padding: 8px 18px;
+        font-size: 0.85rem;
+        min-width: 180px;
+        max-width: 220px;
+        height: 42px;
+        letter-spacing: 0.2px;
     }
-    
-    /* Делаем карточки более отзывчивыми */
-    .card:active {
-        transform: scale(0.98) !important;
-        transition: transform 0.1s !important;
+}
+
+/* Светлая тема для кнопок */
+body.light-theme .view-toggle-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
+    color: white;
+}
+
+body.light-theme .view-toggle-btn:hover {
+    background: linear-gradient(135deg, var(--accent-hover), var(--accent));
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
+}
+
+body.light-theme .view-toggle-btn.secondary {
+    background: linear-gradient(135deg, #94a3b8, #64748b);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    color: white;
+}
+
+body.light-theme .view-toggle-btn.secondary:hover {
+    background: linear-gradient(135deg, #a8b4c4, #7689a3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* АККУРАТНЫЙ КРЕСТИК ДЛЯ ЗАКРЫТИЯ МОДАЛЬНОГО ОКНА */
+.modal-close-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 300;
+    cursor: pointer;
+    z-index: 2001;
+    user-select: none;
+    touch-action: manipulation;
+    opacity: 0.8;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.modal-close-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: rgba(138, 43, 226, 0.8);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+}
+
+.modal-close-btn:active {
+    transform: scale(0.95);
+}
+
+/* СВЕТЛАЯ ТЕМА */
+body.light-theme .modal-close-btn {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    border: 2px solid rgba(37, 99, 235, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body.light-theme .modal-close-btn:hover {
+    background: rgba(37, 99, 235, 0.9);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+/* МОБИЛЬНАЯ ВЕРСИЯ */
+@media (max-width: 768px) {
+    .modal-close-btn {
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 26px;
     }
+}
+
+@media (max-width: 480px) {
+    .modal-close-btn {
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 24px;
+    }
+}
+
+/* В разделе светлой темы добавьте: */
+body.light-theme .mobile-menu-toggle {
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+    background: var(--accent);
+}
+
+body.light-theme .mobile-menu-toggle:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
 }

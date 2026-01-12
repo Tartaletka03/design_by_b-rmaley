@@ -8,12 +8,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const showLessBtn = document.getElementById('showLessBtn');
     const controlsContainer = document.getElementById('controlsContainer');
     const filtersSection = document.getElementById('filtersSection');
+    const foundCardsCounter = document.getElementById('foundCardsCounter');
+    const counterCurrent = document.getElementById('counterCurrent');
+    const counterTotal = document.getElementById('counterTotal');
+    
+    // Элементы мобильного меню
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileSidebar = document.getElementById('mobileSidebar');
+    const sidebarClose = document.getElementById('sidebarClose');
+    const mobileThemeToggle = document.getElementById('mobileThemeToggle');
+    const desktopThemeToggle = document.getElementById('desktopThemeToggle');
     
     let currentCards = [];
     let activeFilters = [];
     let sortDirection = 'desc';
     let filterMode = 'or';
     let isFullView = false;
+    let totalCardsCount = 0;
     
     // Инициализация фильтров
     function initializeFilters() {
@@ -78,41 +89,10 @@ document.addEventListener('DOMContentLoaded', function() {
         img.style.objectFit = 'contain';
         img.style.borderRadius = '8px';
         
-        // Маленький крестик для закрытия
+        // АККУРАТНЫЙ КРЕСТИК ДЛЯ ЗАКРЫТИЯ
         const closeButton = document.createElement('div');
         closeButton.innerHTML = '×';
-        closeButton.style.cssText = `
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            width: 35px;
-            height: 35px;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 2001;
-            user-select: none;
-            touch-action: manipulation;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-        `;
-        
-        // При наведении делаем крестик чуть заметнее
-        closeButton.addEventListener('mouseenter', function() {
-            this.style.opacity = '1';
-            this.style.background = 'rgba(0,0,0,0.8)';
-        });
-        
-        closeButton.addEventListener('mouseleave', function() {
-            this.style.opacity = '0.7';
-            this.style.background = 'rgba(0,0,0,0.5)';
-        });
+        closeButton.className = 'modal-close-btn';
         
         // Функция закрытия
         function closeModalHandler(e) {
@@ -131,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = 'hidden';
     }
 
-    // Функция для открытия ВИДЕО (WEBM, MP4) в полноэкранном режиме
+    // Функция для открытия ВИДЕО в полноэкранном режиме
     function openVideoModal(videoSrc) {
         const modalContent = document.querySelector('.modal-content');
         modalContent.innerHTML = '';
@@ -146,41 +126,10 @@ document.addEventListener('DOMContentLoaded', function() {
         video.style.height = '100%';
         video.style.objectFit = 'contain';
         
-        // Маленький крестик для закрытия
+        // АККУРАТНЫЙ КРЕСТИК ДЛЯ ЗАКРЫТИЯ
         const closeButton = document.createElement('div');
         closeButton.innerHTML = '×';
-        closeButton.style.cssText = `
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            width: 35px;
-            height: 35px;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 2001;
-            user-select: none;
-            touch-action: manipulation;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-        `;
-        
-        // При наведении делаем крестик чуть заметнее
-        closeButton.addEventListener('mouseenter', function() {
-            this.style.opacity = '1';
-            this.style.background = 'rgba(0,0,0,0.8)';
-        });
-        
-        closeButton.addEventListener('mouseleave', function() {
-            this.style.opacity = '0.7';
-            this.style.background = 'rgba(0,0,0,0.5)';
-        });
+        closeButton.className = 'modal-close-btn';
         
         // Функция закрытия
         function closeModalHandler(e) {
@@ -202,10 +151,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Пытаемся запустить видео
         video.play().catch(e => {
             console.log('Автовоспроизведение заблокировано');
-            // Просто показываем видео без звука
         });
     }
-
     
     // Функция для закрытия модального окна
     function closeImageModal() {
@@ -219,15 +166,15 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = '';
     }
     
-    // ПРОСТАЯ ЗАГРУЗКА КАРТОЧЕК ИЗ РУЧНОГО СПИСКА
+    // Загрузка карточек из ручного списка
     function loadCardsFromManualList() {
         try {
             const cardsFolder = './cards/';
             
-            // Сортируем по номеру от большего к меньшему (новые -> старые)
+            // Сортируем по номеру от большего к меньшему
             const sortedCards = [...MANUAL_CARD_LIST].sort((a, b) => b.number - a.number);
             
-            // Проверяем существование файлов (опционально)
+            // Проверяем существование файлов
             const cardsWithPaths = sortedCards.map(card => ({
                 ...card,
                 path: cardsFolder + card.filename
@@ -235,14 +182,18 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Обновляем текущие карточки
             currentCards = cardsWithPaths;
+            totalCardsCount = currentCards.length;
             
-            console.log('✅ Загружено карточек из ручного списка:', currentCards.length);
+            console.log('✅ Загружено карточек из ручного списка:', totalCardsCount);
             
             // Показываем избранные карты
             showFeaturedCards();
             
+            // Обновляем счетчик
+            updateCardsCounter();
+            
             // Показываем успешное уведомление
-            showNotification(`✅ Загружено ${currentCards.length} карточек`, 'success');
+            showNotification(`✅ Загружено ${totalCardsCount} карточек`, 'success');
             
         } catch (error) {
             console.error('Ошибка загрузки карточек:', error);
@@ -254,12 +205,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Фильтрация и отображение карточек
     function filterAndDisplayCards() {
         let filteredCards = [...currentCards];
+        let totalCardsToShow = totalCardsCount;
         
         // В режиме избранных показываем только выбранные карты
         if (!isFullView) {
             filteredCards = filteredCards.filter(card => 
                 FEATURED_CARDS.includes(card.number)
             );
+            totalCardsToShow = FEATURED_CARDS.length;
         }
         
         // Применяем фильтры, если есть активные (только в полном режиме)
@@ -303,8 +256,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Отображаем карточки
         displayCards(filteredCards);
         
-        // Обновляем счетчик и подсказку
-        updateCardsCounter(filteredCards.length);
+        // Обновляем счетчик
+        updateCardsCounter(filteredCards.length, totalCardsToShow);
+        
+        // Обновляем подсказку
         if (isFullView) {
             updateFilterHint();
         }
@@ -355,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const currentTime = new Date().getTime();
                     const timeSinceLastClick = currentTime - lastClickTime;
                     
-                    if (timeSinceLastClick < 300) { // 300ms для двойного клика
+                    if (timeSinceLastClick < 300) {
                         e.preventDefault();
                         e.stopPropagation();
                         openVideoModal(card.path);
@@ -372,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (timeSinceLastTap < 300 && timeSinceLastTap > 0) {
                         tapCount++;
-                        if (tapCount === 2) { // Второй тап в пределах 300ms
+                        if (tapCount === 2) {
                             e.preventDefault();
                             e.stopPropagation();
                             openVideoModal(card.path);
@@ -383,7 +338,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     lastTapTime = currentTime;
                     
-                    // Сбрасываем счетчик тапов через 500ms
                     setTimeout(() => {
                         tapCount = 0;
                     }, 500);
@@ -416,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const currentTime = new Date().getTime();
                     const timeSinceLastClick = currentTime - lastClickTime;
                     
-                    if (timeSinceLastClick < 300) { // 300ms для двойного клика
+                    if (timeSinceLastClick < 300) {
                         e.preventDefault();
                         e.stopPropagation();
                         openImageModal(card.path);
@@ -433,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (timeSinceLastTap < 300 && timeSinceLastTap > 0) {
                         tapCount++;
-                        if (tapCount === 2) { // Второй тап в пределах 300ms
+                        if (tapCount === 2) {
                             e.preventDefault();
                             e.stopPropagation();
                             openImageModal(card.path);
@@ -444,7 +398,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     lastTapTime = currentTime;
                     
-                    // Сбрасываем счетчик тапов через 500ms
                     setTimeout(() => {
                         tapCount = 0;
                     }, 500);
@@ -455,26 +408,43 @@ document.addEventListener('DOMContentLoaded', function() {
             
             cardsContainer.appendChild(cardElement);
         });
+        
+        // Анимация появления карточек
+        setTimeout(() => {
+            const cardElements = cardsContainer.querySelectorAll('.card');
+            cardElements.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px) scale(0.95)';
+                    card.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0) scale(1)';
+                    }, 50);
+                }, index * 50);
+            });
+        }, 100);
     }
     
     // Обновление счетчика карточек
-    function updateCardsCounter(count) {
-        const cardsCountElement = document.getElementById('cardsCount');
-        if (cardsCountElement) {
-            cardsCountElement.textContent = count;
+    function updateCardsCounter(current = 0, total = totalCardsCount) {
+        if (counterCurrent && counterTotal) {
+            counterCurrent.textContent = current;
+            counterTotal.textContent = total;
         }
     }
 
     // Закрытие по клику на затемненную область
     imageModal.addEventListener('click', function(e) {
-        if (e.target === imageModal) {
+        if (e.target === imageModal || e.target.classList.contains('modal-close')) {
             closeImageModal();
         }
     });
 
     // Закрытие по touch на мобильных
     imageModal.addEventListener('touchend', function(e) {
-        if (e.target === imageModal) {
+        if (e.target === imageModal || e.target.classList.contains('modal-close')) {
             e.preventDefault();
             e.stopPropagation();
             closeImageModal();
@@ -488,13 +458,6 @@ document.addEventListener('DOMContentLoaded', function() {
             closeImageModal();
         }
     });
-    
-    // Предотвращаем скроллинг страницы при открытом модальном окне
-    document.addEventListener('touchmove', function(e) {
-        if (imageModal.classList.contains('show')) {
-            e.preventDefault();
-        }
-    }, { passive: false });
     
     // Показать избранные карты
     function showFeaturedCards() {
@@ -521,9 +484,10 @@ document.addEventListener('DOMContentLoaded', function() {
         filtersSection.classList.remove('show');
         showMoreBtn.style.display = 'block';
         showLessBtn.style.display = 'none';
+        foundCardsCounter.style.display = 'none';
         
-        // ОБНОВЛЯЕМ СЧЕТЧИК ДЛЯ ИЗБРАННЫХ КАРТОЧЕК
-        updateCardsCounter(featuredCards.length);
+        // Обновляем счетчик
+        updateCardsCounter(featuredCards.length, FEATURED_CARDS.length);
         
         // Обновляем подсказку
         const filterHint = document.getElementById('filterHint');
@@ -536,6 +500,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showAllCards() {
         isFullView = true;
         controlsContainer.style.display = 'block';
+        foundCardsCounter.style.display = 'block';
         setTimeout(() => {
             filtersSection.classList.add('show');
         }, 100);
@@ -571,9 +536,6 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="empty-state">
                 <h3>Карточки не найдены</h3>
                 <p>Добавьте карточки в папку cards/ и обновите список в коде</p>
-                <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-secondary);">
-                    Файлы должны называться: card1.png, card2.webp, card3.webm и т.д.
-                </p>
             </div>
         `;
     }
@@ -604,15 +566,73 @@ document.addEventListener('DOMContentLoaded', function() {
             border: 1px solid rgba(255,255,255,0.1);
             text-align: center;
             max-width: 90%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         `;
         notification.textContent = message;
         document.body.appendChild(notification);
         
+        // Анимация появления
         setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
+            notification.style.opacity = '1';
+        }, 10);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
         }, 3000);
+    }
+
+    // Управление темой
+    function toggleTheme() {
+        const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+        
+        if (currentTheme === 'dark') {
+            document.body.classList.add('light-theme');
+            localStorage.setItem('theme', 'light');
+            if (desktopThemeToggle) desktopThemeToggle.checked = true;
+            if (mobileThemeToggle) mobileThemeToggle.checked = true;
+        } else {
+            document.body.classList.remove('light-theme');
+            localStorage.setItem('theme', 'dark');
+            if (desktopThemeToggle) desktopThemeToggle.checked = false;
+            if (mobileThemeToggle) mobileThemeToggle.checked = false;
+        }
+    }
+
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            if (desktopThemeToggle) desktopThemeToggle.checked = true;
+            if (mobileThemeToggle) mobileThemeToggle.checked = true;
+        } else if (savedTheme === 'dark') {
+            document.body.classList.remove('light-theme');
+            if (desktopThemeToggle) desktopThemeToggle.checked = false;
+            if (mobileThemeToggle) mobileThemeToggle.checked = false;
+        } else {
+            const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+            if (prefersLight) {
+                document.body.classList.add('light-theme');
+                if (desktopThemeToggle) desktopThemeToggle.checked = true;
+                if (mobileThemeToggle) mobileThemeToggle.checked = true;
+            } else {
+                document.body.classList.remove('light-theme');
+                if (desktopThemeToggle) desktopThemeToggle.checked = false;
+                if (mobileThemeToggle) mobileThemeToggle.checked = false;
+            }
+        }
+    }
+
+    // Управление мобильным меню
+    function toggleMobileMenu() {
+        mobileSidebar.classList.toggle('active');
+        document.body.style.overflow = mobileSidebar.classList.contains('active') ? 'hidden' : '';
     }
 
     // Обработчики событий
@@ -644,60 +664,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Тема
-    const themeToggle = document.getElementById('themeToggle');
-
-    function toggleTheme() {
-        const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
-        
-        if (currentTheme === 'dark') {
-            // Включаем светлую тему
-            document.body.classList.add('light-theme');
-            localStorage.setItem('theme', 'light');
-            themeToggle.checked = true;
-        } else {
-            // Включаем тёмную тему
-            document.body.classList.remove('light-theme');
-            localStorage.setItem('theme', 'dark');
-            themeToggle.checked = false;
-        }
+    // Обработчики темы
+    if (desktopThemeToggle) {
+        desktopThemeToggle.addEventListener('change', toggleTheme);
     }
-
-    function loadTheme() {
-        // Проверяем сохранённую тему пользователя
-        const savedTheme = localStorage.getItem('theme');
-        
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-theme');
-            themeToggle.checked = true;
-        } else if (savedTheme === 'dark') {
-            document.body.classList.remove('light-theme');
-            themeToggle.checked = false;
-        } else {
-            // Если нет сохранённой темы, используем системную
-            const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-            if (prefersLight) {
-                document.body.classList.add('light-theme');
-                themeToggle.checked = true;
-            } else {
-                document.body.classList.remove('light-theme');
-                themeToggle.checked = false;
-            }
-        }
-    }
-
-    themeToggle.addEventListener('change', toggleTheme);
     
-    // Слушаем изменения системной темы (только если пользователь не выбрал тему сам)
+    if (mobileThemeToggle) {
+        mobileThemeToggle.addEventListener('change', toggleTheme);
+    }
+    
+    // Обработчики мобильного меню
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+    }
+    
+    if (sidebarClose) {
+        sidebarClose.addEventListener('click', toggleMobileMenu);
+    }
+    
+    // Закрытие меню при клике вне его
+    document.addEventListener('click', function(event) {
+        if (mobileSidebar.classList.contains('active') && 
+            !mobileSidebar.contains(event.target) && 
+            !mobileMenuToggle.contains(event.target)) {
+            toggleMobileMenu();
+        }
+    });
+    
+    // Слушаем изменения системной темы
     window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
-        // Меняем тему только если пользователь не сохранил свой выбор
         if (!localStorage.getItem('theme')) {
             if (e.matches) {
                 document.body.classList.add('light-theme');
-                themeToggle.checked = true;
+                if (desktopThemeToggle) desktopThemeToggle.checked = true;
+                if (mobileThemeToggle) mobileThemeToggle.checked = true;
             } else {
                 document.body.classList.remove('light-theme');
-                themeToggle.checked = false;
+                if (desktopThemeToggle) desktopThemeToggle.checked = false;
+                if (mobileThemeToggle) mobileThemeToggle.checked = false;
             }
         }
     });
@@ -705,76 +709,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Инициализация
     initializeFilters();
     loadTheme();
-    loadCardsFromManualList(); // Простая загрузка из ручного списка
+    loadCardsFromManualList();
 
-    // Анимация для карточек при загрузке
-    setTimeout(() => {
-        document.querySelectorAll('.card').forEach((card, index) => {
-            setTimeout(() => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 50);
-            }, index * 50);
-        });
-    }, 100);
-
-    // Простая функция для двойного тапа
-    function setupDoubleTap(element, callback) {
-        let lastTap = 0;
-        let tapCount = 0;
-        
-        // Для десктопа - двойной клик
-        element.addEventListener('dblclick', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            callback();
-            return false;
-        });
-        
-        // Для мобильных - двойной тап
-        element.addEventListener('touchend', function(e) {
-            const currentTime = new Date().getTime();
-            const tapLength = currentTime - lastTap;
-            
-            if (tapLength < 500 && tapLength > 0) {
-                tapCount++;
-                if (tapCount === 2) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    callback();
-                    tapCount = 0;
-                }
-            } else {
-                tapCount = 1;
-            }
-            
-            lastTap = currentTime;
-            
-            // Сбрасываем через секунду
-            setTimeout(() => {
-                tapCount = 0;
-            }, 1000);
-        });
-    }
-
-    // Тогда в displayCards() используем так:
-    setupDoubleTap(cardElement, function() {
-        if (isVideo) {
-            openVideoModal(card.path);
-        } else {
-            openImageModal(card.path);
-        }
-    });
-
-    
-    // Дополнительный фикс для мобильных (на всякий случай)
+    // Фикс для мобильных
     setTimeout(function() {
-        // Убедимся, что все карточки имеют touch события
         document.querySelectorAll('.card').forEach(card => {
             if (!card.hasTouchListener) {
                 card.addEventListener('touchend', function(event) {

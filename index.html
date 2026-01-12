@@ -9,12 +9,23 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="hcontainer">
-        <header class="header">
-            <h1>by B@rmaley</h1>
-            <div class="theme-switcher">
+    <!-- Мобильное боковое меню -->
+    <div class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="sidebar-header">
+            <h3>Меню</h3>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-content">
+            <div class="mobile-theme-switcher">
+                <p>Тема:</p>
                 <label class="switch">
-                    <input type="checkbox" id="themeToggle">
+                    <input type="checkbox" id="mobileThemeToggle">
                     <span class="slider"></span>
                     <span class="theme-icons">
                         <span class="icon moon">🌙</span>
@@ -22,17 +33,50 @@
                     </span>
                 </label>
             </div>
-            <p>Хотите уникальный дизайн карточки? А может хотите что-то иное? Свяжитесь со мной любым удобным способом!</p>
+            <div class="mobile-contacts">
+                <p>Контакты:</p>
+                <div class="mobile-contact-links">
+                    <a href="https://t.me/NoT_TFound" target="_blank" class="mobile-contact-link" title="Telegram">
+                        <i class="fab fa-telegram"></i>
+                        <span>Telegram</span>
+                    </a>
+                    <a href="https://discordapp.com/users/860621809505402890" target="_blank" class="mobile-contact-link" title="Discord">
+                        <i class="fab fa-discord"></i>
+                        <span>Discord</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hcontainer">
+        <header class="header">
+            <h1>by B@rmaley</h1>
             
-            <!-- Контакты в хедере -->
-            <div class="header-contacts">
-                <a href="https://t.me/NoT_TFound" target="_blank" class="contact-link" title="Telegram">
+            <!-- Десктопный переключатель темы -->
+            <div class="theme-switcher desktop-theme">
+                <label class="switch">
+                    <input type="checkbox" id="desktopThemeToggle">
+                    <span class="slider"></span>
+                    <span class="theme-icons">
+                        <span class="icon moon">🌙</span>
+                        <span class="icon sun">☀️</span>
+                    </span>
+                </label>
+            </div>
+            
+            <p>Хотите уникальный дизайн карточки? А может хотите что-то иное? Свяжитесь со мной!</p>
+            
+            <!-- Контакты в хедере (только для десктопа с текстом) -->
+            <div class="header-contacts desktop-contacts">
+                <a href="https://t.me/NoT_TFound" target="_blank" class="contact-link-with-text telegram" title="Telegram">
                     <i class="fab fa-telegram"></i>
+                    <span>Telegram</span>
                 </a>
-                <a href="https://discordapp.com/users/860621809505402890" target="_blank" class="contact-link" title="Discord">
+                <a href="https://discordapp.com/users/860621809505402890" target="_blank" class="contact-link-with-text discord" title="Discord">
                     <i class="fab fa-discord"></i>
+                    <span>Discord</span>
                 </a>
-                <span class="contact-text">Заказать дизайн</span>
             </div>
         </header>
     </div>
@@ -61,15 +105,15 @@
                 <div class="filter-hint" id="filterHint">
                     <!-- Подсказка будет обновляться через JavaScript -->
                 </div>
+                <!-- Счетчик найденных карт - ПОД подсказкой фильтра -->
+                <div class="found-cards-counter" id="foundCardsCounter">
+                    <span class="counter-number" id="counterCurrent">0</span> из <span class="counter-number" id="counterTotal">0</span>
+                </div>
             </div>
 
             <div class="view-toggle-section">
                 <button class="view-toggle-btn secondary" id="showLessBtn">👁️ Отобразить меньше карт</button>
             </div>
-        </div>
-
-        <div class="cards-counter" id="cardsCounter">
-            Карточки: <span id="cardsCount">0</span>
         </div>
 
         <div class="cards-container" id="cardsContainer">
