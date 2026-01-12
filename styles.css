@@ -1297,22 +1297,24 @@ body.light-theme .found-cards-counter .counter-number {
     }
     
     .view-toggle-btn {
-        padding: 10px 22px;
-        font-size: 0.9rem;
-        min-width: 200px;
-        max-width: 250px;
-        height: 44px;
+        padding: 10px 16px; /* Уменьшаем отступы */
+        font-size: 0.85rem; /* Уменьшаем размер шрифта */
+        min-width: 180px; /* Уменьшаем минимальную ширину */
+        max-width: 240px; /* Уменьшаем максимальную ширину */
+        height: 40px; /* Уменьшаем высоту */
+        white-space: nowrap; /* Запрещаем перенос текста */
+        overflow: hidden; /* Скрываем вылезающий текст */
+        text-overflow: ellipsis; /* Добавляем многоточие если текст не помещается */
     }
 }
 
 @media (max-width: 480px) {
     .view-toggle-btn {
-        padding: 8px 18px;
-        font-size: 0.85rem;
-        min-width: 180px;
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        min-width: 160px;
         max-width: 220px;
-        height: 42px;
-        letter-spacing: 0.2px;
+        height: 38px;
     }
 }
 
