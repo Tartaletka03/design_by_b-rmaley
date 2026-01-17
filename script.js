@@ -601,51 +601,51 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Показать уведомление
-    function showNotification(message, type = 'info') {
-        const existingNotification = document.querySelector('.auto-notification');
-        if (existingNotification) {
-            existingNotification.remove();
-        }
+    // function showNotification(message, type = 'info') {
+    //     const existingNotification = document.querySelector('.auto-notification');
+    //     if (existingNotification) {
+    //         existingNotification.remove();
+    //     }
         
-        const notification = document.createElement('div');
-        notification.className = 'auto-notification';
-        notification.style.cssText = `
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: ${type === 'error' ? '#ff4444' : type === 'success' ? '#00c851' : '#33b5e5'};
-            color: white;
-            padding: 12px 24px;
-            border-radius: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            z-index: 10000;
-            font-size: 0.9rem;
-            font-weight: 500;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-            max-width: 90%;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        `;
-        notification.textContent = message;
-        document.body.appendChild(notification);
+    //     const notification = document.createElement('div');
+    //     notification.className = 'auto-notification';
+    //     notification.style.cssText = `
+    //         position: fixed;
+    //         top: 80px;
+    //         left: 50%;
+    //         transform: translateX(-50%);
+    //         background: ${type === 'error' ? '#ff4444' : type === 'success' ? '#00c851' : '#33b5e5'};
+    //         color: white;
+    //         padding: 12px 24px;
+    //         border-radius: 25px;
+    //         box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    //         z-index: 10000;
+    //         font-size: 0.9rem;
+    //         font-weight: 500;
+    //         backdrop-filter: blur(10px);
+    //         border: 1px solid rgba(255,255,255,0.1);
+    //         text-align: center;
+    //         max-width: 90%;
+    //         opacity: 0;
+    //         transition: opacity 0.3s ease;
+    //     `;
+    //     notification.textContent = message;
+    //     document.body.appendChild(notification);
         
-        // Анимация появления
-        setTimeout(() => {
-            notification.style.opacity = '1';
-        }, 10);
+    //     // Анимация появления
+    //     setTimeout(() => {
+    //         notification.style.opacity = '1';
+    //     }, 10);
         
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 300);
-        }, 3000);
-    }
+    //     setTimeout(() => {
+    //         notification.style.opacity = '0';
+    //         setTimeout(() => {
+    //             if (notification.parentNode) {
+    //                 notification.remove();
+    //             }
+    //         }, 300);
+    //     }, 3000);
+    // }
 
     // Управление темой
     function toggleTheme() {
